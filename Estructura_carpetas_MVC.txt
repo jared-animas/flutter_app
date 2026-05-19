@@ -1,0 +1,22 @@
+lib/
+│
+├── models/                       <-- (M) LOS MODELOS DE DATOS
+│   ├── user_model.dart           <-- Estructura de los datos del usuario
+│   └── item_model.dart           <-- Estructura de los datos que vas a subir/leer
+│
+├── controllers/                  <-- (C) LA LÓGICA Y CONEXIÓN A FIREBASE
+│   ├── auth_controller.dart      <-- Métodos: login(), registro(), logout()
+│   ├── display_controller.dart   <-- Métodos: obtenerDatosPorStream(), eliminarItem()
+│   └── entry_controller.dart     <-- Métodos: guardarNuevoItem(), validarFormulario()
+│
+├── views/                        <-- (V) LA INTERFAZ DE USUARIO (PANTALLAS)
+│   ├── auth/
+│   │   └── login_view.dart       <-- Pantalla de inicio de sesión
+│   ├── display/
+│   │   └── home_view.dart        <-- Pantalla que muestra la lista de datos
+│   ├── entry/
+│   │   └── add_view.dart         <-- Pantalla con el formulario para agregar datos
+│   └── widgets/
+│       └── custom_input.dart     <-- Diseño de campos de texto reutilizables
+│
+└── main.dart                     <-- Inicialización de Firebase y arranque de la app
