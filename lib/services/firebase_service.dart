@@ -1,16 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/models/item_model.dart';
 
-FirebaseFirestore db = FirebaseFirestore.instance;
 
-Future<List> getPromociones() async{
-  List promociones = [];
-  CollectionReference collectionReferencePromociones = db.collection('Promociones');
-  QuerySnapshot queryPromociones = await collectionReferencePromociones.get();
+class FirebaseService {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  queryPromociones.docs.forEach((documento) {
-    promociones.add(documento.data());
+  // Actualizar datos en tiempo real
+  Stream<List<PromocionModel>> obtenerPromocionesStream() {
+    return _db.collection('Promociones').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return PromocionModel.fromMap(doc.id, doc.data());
+      }).toList();
     });
+  }
 
-  return promociones;
+// Obtener promociones
+  Future<List<PromocionModel>> getPromociones() async {
+    final snapshot = await _db.collection('Promociones').get();
+
+    return snapshot.docs.map((doc) {
+      return PromocionModel.fromMap(doc.id, doc.data());
+    }).toList();
+  }
+
+  // Agregar promocion
+  Future<void> addPromocion(PromocionModel promocion) async {
+    await _db.collection('Promociones').add(promocion.toMap());
+  }
+
+  // Actualizar promocion
+  Future<void> actualizarPromocion(String id, PromocionModel promocion) async {
+    await _db.collection('promociones').doc(id).update(promocion.toMap());
+  }
+
+  // Eliminar promocion
+  Future<void> eliminarPromocion(String id) async {
+    await _db.collection('promociones').doc(id).delete();
+  }
+
 }
+
+
+

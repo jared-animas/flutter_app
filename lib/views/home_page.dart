@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/services/firebase_service.dart';
+import '../services/firebase_service.dart';
 import '../controllers/auth_controller.dart';
-
+import '../models/item_model.dart';
 
 class Home extends StatefulWidget {
   const Home({
@@ -14,10 +14,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  final AuthController authController = AuthController();
+  final FirebaseService _firebaseService = FirebaseService();
+  
   @override
   Widget build(BuildContext context) {
-
-    final AuthController authController = AuthController();
 
     return Scaffold(
       appBar: AppBar(
@@ -61,17 +63,32 @@ class _HomeState extends State<Home> {
           const SizedBox(width: 8),
         ],
       ),
-      body: FutureBuilder(
-          future: getPromociones(),
+      body: FutureBuilder<List<PromocionModel>>(
+          future: _firebaseService.getPromociones(),
           builder: (context, snapshot){
-            if (snapshot.hasData) {
-              return ListView.builder(itemCount: snapshot.data?.length,
-              itemBuilder: ((context, index) {
-                return Text(snapshot.data?[index]['Titulo']);
-              }));
-            } else {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              final listaPromociones = snapshot.data!;
+
+              return ListView.builder(
+                itemCount: listaPromociones.length,
+                itemBuilder: (context, index) {
+                  final promocion = listaPromociones[index];
+                  return Text(promocion.titulo);
+                },
+              );
+            } else {
+              return const Center(
+                child: Text('No hay promociones disponibles.'),
               );
             }
           },
