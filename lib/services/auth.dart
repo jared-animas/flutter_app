@@ -16,4 +16,11 @@ class AuthService {
   Future<void> cerrarSesion() async {
     await _auth.signOut();
   }
+
+  Future<UserCredential> registrarCuenta(String email, String password) async {
+    return await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
 }

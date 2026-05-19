@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Flutter + Firebase'),
-        // MANDATORIO: Agregamos la ventanita desplegable en la esquina superior derecha
+        // Desplegable para cierre de sesion
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
@@ -33,9 +33,8 @@ class _HomeState extends State<Home> {
             ),
             onSelected: (value) async {
               if (value == 'logout') {
-                // ACCIÓN MVC: Delegamos el cierre de sesión al controlador
+
                 bool exito = await authController.ejecutarLogout();
-                
                 if (!exito && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('No se pudo cerrar la sesión')),
@@ -61,6 +60,21 @@ class _HomeState extends State<Home> {
           ),
           const SizedBox(width: 8),
         ],
+      ),
+      body: FutureBuilder(
+          future: getPromociones(),
+          builder: (context, snapshot){
+            if (snapshot.hasData) {
+              return ListView.builder(itemCount: snapshot.data?.length,
+              itemBuilder: ((context, index) {
+                return Text(snapshot.data?[index]['Titulo']);
+              }));
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){

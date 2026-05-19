@@ -30,10 +30,30 @@ class AuthController {
   Future<bool> ejecutarLogout() async {
     try {
       await _authService.cerrarSesion();
-      return true; // Retorna éxito
+      return true;
     } catch (e) {
       // print("Error al cerrar sesión en controlador: $e");
-      return false; // Retorna fallo
+      return false;
     }
   }
+
+  // Registrarse en Firebase con email y contraseña
+  Future<String?> intentarRegistro({required String email, required String password}) async {
+    try {
+      await _authService.registrarCuenta(email.trim(), password.trim());
+      return null;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'email-already-in-use':
+          return 'Ya existe una cuenta con este correo.';
+        case 'invalid-email':
+          return 'El formato del correo no es válido.';
+        default:
+          return 'Error de registro: ${e.message}';
+      }
+    } catch (e) {
+      return 'Ocurrido un error inesperado. Inténtalo de nuevo.';
+    }
+  }
+
 }
