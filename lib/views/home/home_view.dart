@@ -21,7 +21,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     //ajustar tamaño de elementos
     final double anchoPantalla = MediaQuery.of(context).size.width;
-    final bool mostrarColumnasExtra = anchoPantalla > 600;
     final double tamanoTitulo = (anchoPantalla * 0.025).clamp(20.0, 32.0);
     final double tamanoSubtitulo = (anchoPantalla * 0.012).clamp(12.0, 15.0);
     final double tamanoTabla = (anchoPantalla * 0.013).clamp(13.0, 16.0);
