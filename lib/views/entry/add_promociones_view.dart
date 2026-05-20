@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../controllers/entry_controller.dart';
+import '../../controllers/promocion_controller.dart';
 import '../widgets/custom_form.dart';
 
 class AddPromocionesPage extends StatefulWidget {
@@ -11,7 +11,7 @@ class AddPromocionesPage extends StatefulWidget {
 }
 
 class _AddPromocionPageState extends State<AddPromocionesPage> {
-  final EntryController _entryController = EntryController();
+  final PromocionController _entryController = PromocionController();
 
   TextEditingController tituloEditingController = TextEditingController();
   TextEditingController descripcionEditingController = TextEditingController();

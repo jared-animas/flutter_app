@@ -25,7 +25,7 @@ class FirebaseService {
   }
 
   // Agregar promocion
-  Future<void> addPromocion(PromocionModel promocion) async {
+  Future<void> registrarPromocion(PromocionModel promocion) async {
     await _db.collection(dbName).add(promocion.toMap());
   }
 

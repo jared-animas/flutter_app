@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/views/widgets/custom_form.dart';
 import 'package:flutter_app/views/widgets/custom_popup.dart';
 import '../../controllers/auth_controller.dart';
-import '../../controllers/display_controller.dart';
-import '../../controllers/update_controller.dart';
-import '../../controllers/delete_controller.dart';
+import '../../controllers/promocion_controller.dart';
 import '../../models/item_model.dart';
 
 class Home extends StatefulWidget {
@@ -16,7 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final AuthController _authController = AuthController();
-  final DisplayController _displayController = DisplayController();
+  final PromocionController _displayController = PromocionController();
   String _filtroSeleccionado = 'All';
 
   @override
@@ -389,8 +387,8 @@ void _mostrarDialogoEdicion(BuildContext context, PromocionModel promo) {
   final TextEditingController descripcionEditController = TextEditingController(
     text: promo.descripcion,
   );
-  final UpdateController upateController = UpdateController();
-  final DeleteController deleteController = DeleteController();
+  final PromocionController upateController = PromocionController();
+  final PromocionController deleteController = PromocionController();
 
   DateTime fechaEdit = promo.fecha;
   bool estadoEdit = promo.estado;
