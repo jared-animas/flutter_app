@@ -3,6 +3,7 @@ import 'package:flutter_app/views/widgets/custom_form.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/display_controller.dart';
 import '../../controllers/update_controller.dart';
+import '../../controllers/delete_controller.dart';
 import '../../models/item_model.dart';
 
 class Home extends StatefulWidget {
@@ -158,10 +159,11 @@ class _HomeState extends State<Home> {
 
 // ventanita de edición
 void _mostrarDialogoEdicion(BuildContext context, PromocionModel promo) {
-  // Precargamos los controladores locales con los datos actuales del elemento seleccionado
   final TextEditingController tituloEditController = TextEditingController(text: promo.titulo);
   final TextEditingController descripcionEditController = TextEditingController(text: promo.descripcion);
-  final UpdateController _upateController = UpdateController();
+  final UpdateController upateController = UpdateController();
+  final DeleteController deleteController = DeleteController();
+
   DateTime fechaEdit = promo.fecha;
   bool estadoEdit = promo.estado;
 
@@ -212,8 +214,35 @@ void _mostrarDialogoEdicion(BuildContext context, PromocionModel promo) {
             actions: [
               // Botón Cancelar
               TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(111, 170, 170, 170),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                child: const Text('Cancelar', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(141, 248, 55, 55),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                onPressed: () async{
+                  String? error = await deleteController.eliminarPromocion(
+                    id: promo.id,
+                  );
+
+                  if (error != null && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(error), backgroundColor: Colors.red),
+                    );
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('¡Eliminado con éxito!'), backgroundColor: Colors.green),
+                    );
+                    Navigator.pop(context); // Cierra la ventana emergente automáticamente
+                  }
+                },
+                child: const Text('Borrar', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
               // Botón Guardar Cambios
               ElevatedButton(
@@ -222,7 +251,7 @@ void _mostrarDialogoEdicion(BuildContext context, PromocionModel promo) {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 onPressed: () async {
-                  String? error = await _upateController.modificarPromocion(
+                  String? error = await upateController.modificarPromocion(
                     id: promo.id,
                     titulo: tituloEditController.text,
                     descripcion: descripcionEditController.text,
