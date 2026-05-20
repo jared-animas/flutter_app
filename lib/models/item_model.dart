@@ -22,7 +22,7 @@ class PromocionModel {
       descripcion: map['Descripcion'] ?? '',
       // Convertimos el Timestamp de Firebase de vuelta a un DateTime de Dart
       fecha: (map['Fecha'] as Timestamp).toDate(),
-      estado: map['Estado'] ?? false,
+      estado: map['Estatus'] ?? false,
     );
   }
   Map<String, dynamic> toMap() {
@@ -30,7 +30,7 @@ class PromocionModel {
       'Titulo': titulo,
       'Descripcion': descripcion,
       'Fecha': fecha,
-      'Estado': estado,
+      'Estatus': estado,
     };
   }
 }

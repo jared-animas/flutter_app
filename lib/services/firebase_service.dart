@@ -30,12 +30,12 @@ class FirebaseService {
 
   // Actualizar promocion
   Future<void> actualizarPromocion(String id, PromocionModel promocion) async {
-    await _db.collection('promociones').doc(id).update(promocion.toMap());
+    await _db.collection('Promociones').doc(id).update(promocion.toMap());
   }
 
   // Eliminar promocion
   Future<void> eliminarPromocion(String id) async {
-    await _db.collection('promociones').doc(id).delete();
+    await _db.collection('Promociones').doc(id).delete();
   }
 
 }

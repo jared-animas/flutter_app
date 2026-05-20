@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../controllers/entry_controller.dart';
 import '../views/widgets/custom_input.dart';
 import '../views/widgets/custom_switch.dart';
+import '../views/widgets/custom_form.dart';
 
 class AddPromocionesPage extends StatefulWidget{
   const AddPromocionesPage({super.key});
@@ -17,11 +18,18 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
   TextEditingController tituloEditingController = TextEditingController();
   TextEditingController descripcionEditingController = TextEditingController();
   TextEditingController fechaEditingController = TextEditingController();
-  TextEditingController estadoEditingController = TextEditingController();
 
   DateTime _fechaSeleccionada = DateTime.now();
   bool _estadoSeleccionado = false;
   bool _cargando = false;
+  final formKey = GlobalKey<FormState>();
+
+  // precargar el controlador con la fecha actual
+  @override
+  void initState() {
+    super.initState();
+    fechaEditingController.text = "${_fechaSeleccionada.year}-${_fechaSeleccionada.month.toString().padLeft(2, '0')}-${_fechaSeleccionada.day.toString().padLeft(2, '0')}";
+  }
 
   void _intentarGuardar() async {
     setState(() => _cargando = true);
@@ -86,38 +94,35 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
                   ),
 
                   const SizedBox(height: 20),
-
-                  CustomInput(
-                    controller: tituloEditingController,
-                    label: 'Titulo de la promocion',
-                    keyboardType: TextInputType.text,
-                  ),
-                  CustomInput(
-                    controller: descripcionEditingController,
-                    label: 'Descripcion de la promocion',
-                    keyboardType: TextInputType.text,
-                  ),
-                  InputDatePickerFormField(
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime(2030),
-                    initialDate: _fechaSeleccionada,
-                    fieldLabelText: 'Fecha de la promoción',
-                    onDateSubmitted: (date) {
-                      _fechaSeleccionada = date;
-                    },
-                    onDateSaved: (date) {
-                      _fechaSeleccionada = date;
-                    },
-                  ),
-                  CustomSwitch(
-                    title: 'Estado de la promoción (Inactivo/Activo)',
-                    value: _estadoSeleccionado,
-                    onChanged: (bool nuevoValor) {
+                  PromocionFormTemplate(
+                    formKey: formKey,
+                    tituloController: tituloEditingController,
+                    descripcionController: descripcionEditingController,
+                    fechaController: fechaEditingController,
+                    estadoValue: _estadoSeleccionado,
+                    
+                    onEstadoChanged: (bool nuevoValor) {
                       setState(() {
                         _estadoSeleccionado = nuevoValor;
                       });
                     },
+                    
+                    onFechaTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _fechaSeleccionada,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _fechaSeleccionada = picked;
+                          fechaEditingController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                        });
+                      }
+                    },
                   ),
+
                   const SizedBox(height: 24),
 
                   _cargando
