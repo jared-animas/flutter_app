@@ -2,16 +2,14 @@
 
 A new Flutter project.
 
-## Getting Started
+## Prerrequisitos de Compilación
+Para que este proyecto compile correctamente en su entorno local, es necesario generar las credenciales de Firebase:
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Asegúrese de tener instalado el **Firebase CLI** (`npm install -g firebase-tools`).
+2. Inicie sesión en su cuenta de Firebase mediante `firebase login`.
+3. Ejecute en la raíz del proyecto:
+   ```bash
+   flutterfire configure
+   ```
+4. Seleccione su propio proyecto de Firebase para generar de forma local el archivo obligatorio `lib/firebase_options.dart`.
+5. Ejecute `flutter pub get` y proceda a compilar.

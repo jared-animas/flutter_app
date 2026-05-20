@@ -163,7 +163,7 @@ class _LoginViewState extends State<LoginView> {
 
                           // Formulario Registro
                           Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -184,7 +184,7 @@ class _LoginViewState extends State<LoginView> {
                                   keyboardType: TextInputType.visiblePassword,
                                   obscureText: true,
                                 ),
-                                const SizedBox(height: 12),
+                                // const SizedBox(height: 8),
                                 _cargando
                                     ? const CircularProgressIndicator(
                                         color: Color(0xFF4B39EF),
