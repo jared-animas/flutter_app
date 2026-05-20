@@ -87,10 +87,259 @@ class _HomeState extends State<Home> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final bool esPantallaGrande = constraints.maxWidth > 768;
+          final bool mostrarColumnasExtra = constraints.maxWidth > 600;
+
+          // Si la altura disponible es menor a 500px (modo horizontal), activamos el scroll de toda la pantalla.
+          final bool usarScrollGlobal = constraints.maxHeight < 500;
+
+          // Componentes de la parte superior (Título secundario + Filtros + Cabecera)
+          Widget componentesSuperiores = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'A continuación se muestran todas las promociones',
+                style: TextStyle(
+                  color: const Color(0xFF57636C),
+                  fontSize: tamanoSubtitulo,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // FILTROS
+              Row(
+                children: ['All', 'activas', 'inactivas'].map((tipo) {
+                  final bool esSeleccionado = _filtroSeleccionado == tipo;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: ChoiceChip(
+                      label: Text(tipo),
+                      selected: esSeleccionado,
+                      selectedColor: const Color.fromARGB(255, 177, 168, 255),
+                      onSelected: (bool selected) {
+                        if (selected) {
+                          setState(() => _filtroSeleccionado = tipo);
+                        }
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+
+              // Encabezado de la tabla
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F4F8),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Titulo',
+                        style: const TextStyle(
+                          color: Color(0xFF57636C),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    if (mostrarColumnasExtra)
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Fecha',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xFF57636C),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Estatus',
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(
+                          color: Color(0xFF57636C),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Estado actual',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF57636C),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Editar o enviar',
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          color: Color(0xFF57636C),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          );
+
+          // Tabla de lista de datos
+          Widget contenidoTabla = StreamBuilder<List<PromocionModel>>(
+            stream: _displayController.streamPromociones,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text('No hay registros disponibles.'),
+                );
+              }
+
+              final listaFiltrada = snapshot.data!.where((promo) {
+                if (_filtroSeleccionado == 'activas')
+                  return promo.estado == true;
+                if (_filtroSeleccionado == 'inactivas')
+                  return promo.estado == false;
+                return true;
+              }).toList();
+
+              return ListView.builder(
+                shrinkWrap: usarScrollGlobal,
+                physics: usarScrollGlobal
+                    ? const NeverScrollableScrollPhysics()
+                    : const BouncingScrollPhysics(),
+                itemCount: listaFiltrada.length,
+                itemBuilder: (context, index) {
+                  final promo = listaFiltrada[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Color(0xFFF1F4F8)),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            promo.titulo,
+                            style: TextStyle(
+                              fontSize: tamanoTabla,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        if (mostrarColumnasExtra)
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              promo.fecha.toString().substring(0, 10),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        Expanded(
+                          child: Switch(
+                            value: promo.estado,
+                            activeThumbColor: const Color.fromARGB(
+                              255,
+                              0,
+                              0,
+                              0,
+                            ),
+                            activeTrackColor: const Color.fromARGB(
+                              255,
+                              0,
+                              255,
+                              8,
+                            ).withValues(alpha: 0.3),
+                            inactiveThumbColor: const Color.fromARGB(
+                              59,
+                              0,
+                              0,
+                              0,
+                            ),
+                            inactiveTrackColor: const Color.fromARGB(
+                              255,
+                              255,
+                              17,
+                              0,
+                            ).withValues(alpha: 0.3),
+                            onChanged: null,
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: promo.fechaEnvio != null
+                                    ? const Text(
+                                        'Enviada',
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Pendiente',
+                                        style: TextStyle(
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: PromocionMenuOptions(
+                              promo: promo,
+                              onEditarTap: (context, promocionSeleccionada) {
+                                _mostrarDialogoEdicion(
+                                  context,
+                                  promocionSeleccionada,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          );
 
           return Center(
             child: Container(
-              // ajuste para pc
               constraints: BoxConstraints(
                 maxWidth: esPantallaGrande ? 1024 : double.infinity,
               ),
@@ -109,262 +358,21 @@ class _HomeState extends State<Home> {
                       ]
                     : [],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Acontinuacion se muestran todas las promociones',
-                    style: TextStyle(
-                      color: Color(0xFF57636C),
-                      fontSize: tamanoSubtitulo,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // FILTROS
-                  Row(
-                    children: ['All', 'activas', 'inactivas'].map((tipo) {
-                      final bool esSeleccionado = _filtroSeleccionado == tipo;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: Text(tipo),
-                          selected: esSeleccionado,
-                          selectedColor: const Color.fromARGB(
-                            255,
-                            177,
-                            168,
-                            255,
-                          ),
-                          onSelected: (bool selected) {
-                            if (selected) {
-                              setState(() => _filtroSeleccionado = tipo);
-                            }
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Encabezado de la tabla
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F4F8),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
+              child: usarScrollGlobal
+                  ? SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [componentesSuperiores, contenidoTabla],
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            'Titulo',
-                            style: TextStyle(
-                              color: Color(0xFF57636C),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        if (mostrarColumnasExtra)
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Fecha',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF57636C),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Estatus',
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(
-                              color: Color(0xFF57636C),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Estado actual',
-                            textAlign: TextAlign.justify,
-                            style: TextStyle(
-                              color: Color(0xFF57636C),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Editar o enviar',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: Color(0xFF57636C),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        // Expanded(flex: 1, child: Text('Enviar', textAlign: TextAlign.right, style: TextStyle(color: Color(0xFF57636C), fontWeight: FontWeight.w500))),
+                        componentesSuperiores,
+                        Expanded(child: contenidoTabla),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Tomar la lista de promociones y mostrarlas
-                  Expanded(
-                    child: StreamBuilder<List<PromocionModel>>(
-                      stream: _displayController.streamPromociones,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(
-                            child: Text('No hay registros disponibles.'),
-                          );
-                        }
-
-                        // Funcion para filtrar
-                        final listaFiltrada = snapshot.data!.where((promo) {
-                          if (_filtroSeleccionado == 'activas') {
-                            return promo.estado == true;
-                          }
-                          if (_filtroSeleccionado == 'inactivas') {
-                            return promo.estado == false;
-                          }
-                          return true;
-                        }).toList();
-
-                        return ListView.builder(
-                          itemCount: listaFiltrada.length,
-                          itemBuilder: (context, index) {
-                            final promo = listaFiltrada[index];
-
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(color: Color(0xFFF1F4F8)),
-                                ),
-                              ),
-                              //elementos de la tabla
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      promo.titulo,
-                                      style: TextStyle(
-                                        fontSize: tamanoTabla,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  if (mostrarColumnasExtra)
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        promo.fecha.toString().substring(0, 10),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  Expanded(
-                                    child: Switch(
-                                      value: promo.estado,
-                                      // CAMBIO DE COLORES DINÁMICOS (Verde / Rojo)
-                                      activeThumbColor: const Color.fromARGB(
-                                        255,
-                                        0,
-                                        0,
-                                        0,
-                                      ),
-                                      activeTrackColor: const Color.fromARGB(
-                                        255,
-                                        0,
-                                        255,
-                                        8,
-                                      ).withValues(alpha: 0.3),
-                                      inactiveThumbColor: const Color.fromARGB(
-                                        59,
-                                        0,
-                                        0,
-                                        0,
-                                      ),
-                                      inactiveTrackColor: const Color.fromARGB(
-                                        255,
-                                        255,
-                                        17,
-                                        0,
-                                      ).withValues(alpha: 0.3),
-                                      onChanged: null,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Center(
-                                        child: promo.fechaEnvio != null
-                                            ? const Text(
-                                                'Enviada',
-                                                style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              )
-                                            : const Text(
-                                                'Pendiente',
-                                                style: TextStyle(
-                                                  color: Colors.orange,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: PromocionMenuOptions(
-                                        promo:
-                                            promo,
-                                        onEditarTap:
-                                            (context, promocionSeleccionada) {
-                                              _mostrarDialogoEdicion(
-                                                context,
-                                                promocionSeleccionada,
-                                              );
-                                            },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
             ),
           );
         },
@@ -535,9 +543,7 @@ void _mostrarDialogoEdicion(BuildContext context, PromocionModel promo) {
                           ),
                         );
                         // Cierra ventana en automatico
-                        Navigator.pop(
-                          context,
-                        );
+                        Navigator.pop(context);
                       }
                     },
                     child: const Text(
