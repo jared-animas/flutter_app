@@ -3,7 +3,6 @@ import 'package:flutter_app/models/item_model.dart';
 
 const dbName = 'Promociones';
 
-
 class FirebaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
@@ -16,7 +15,7 @@ class FirebaseService {
     });
   }
 
-// Obtener promociones
+  // Obtener promociones
   Future<List<PromocionModel>> getPromociones() async {
     final snapshot = await _db.collection(dbName).get();
 
@@ -40,7 +39,10 @@ class FirebaseService {
     await _db.collection(dbName).doc(id).delete();
   }
 
+  // Simular envio
+  Future<void> registrarEnvioPromocion(String id, DateTime horaEnvio) async {
+    await _db.collection(dbName).doc(id).update({
+      'FechaEnvio': Timestamp.fromDate(horaEnvio),
+    });
+  }
 }
-
-
-

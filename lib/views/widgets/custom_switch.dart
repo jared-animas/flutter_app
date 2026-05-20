@@ -27,7 +27,8 @@ class CustomSwitch extends StatelessWidget {
         ),
         value: value,
         activeThumbColor: const Color(0xFF4B39EF),
-        contentPadding: EdgeInsets.zero, // Alinea el texto perfectamente al borde izquierdo
+        contentPadding:
+            EdgeInsets.zero, // Alinea el texto perfectamente al borde izquierdo
         onChanged: onChanged,
       ),
     );

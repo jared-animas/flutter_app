@@ -13,8 +13,12 @@ class UpdateController {
     required bool estado,
   }) async {
     try {
-      if (id == null || id.isEmpty) return 'Error: El ID de la promocion es requerido.';
-      if (titulo.trim().isEmpty || descripcion.trim().isEmpty) return 'Campos vacios.';
+      if (id == null || id.isEmpty) {
+        return 'Error: El ID de la promocion es requerido.';
+      }
+      if (titulo.trim().isEmpty || descripcion.trim().isEmpty) {
+        return 'Campos vacios.';
+      }
 
       final promocionEditada = PromocionModel(
         id: id,

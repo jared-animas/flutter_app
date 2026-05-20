@@ -4,12 +4,14 @@ import '../services/auth.dart';
 class AuthController {
   final AuthService _authService = AuthService();
 
-  Future<String?> intentarLogin({required String email, required String password}) async {
+  // Iniciar sesión en Firebase con email y contraseña
+  Future<String?> intentarLogin({
+    required String email,
+    required String password,
+  }) async {
     try {
-
       await _authService.iniciarSesion(email.trim(), password.trim());
       return null;
-
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -38,7 +40,10 @@ class AuthController {
   }
 
   // Registrarse en Firebase con email y contraseña
-  Future<String?> intentarRegistro({required String email, required String password}) async {
+  Future<String?> intentarRegistro({
+    required String email,
+    required String password,
+  }) async {
     try {
       await _authService.registrarCuenta(email.trim(), password.trim());
       return null;
@@ -55,5 +60,4 @@ class AuthController {
       return 'Ocurrido un error inesperado. Inténtalo de nuevo.';
     }
   }
-
 }

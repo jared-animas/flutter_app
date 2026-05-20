@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../controllers/entry_controller.dart';
 import '../widgets/custom_form.dart';
 
-class AddPromocionesPage extends StatefulWidget{
+class AddPromocionesPage extends StatefulWidget {
   const AddPromocionesPage({super.key});
 
   @override
   State<AddPromocionesPage> createState() => _AddPromocionPageState();
-  }
+}
 
 class _AddPromocionPageState extends State<AddPromocionesPage> {
   final EntryController _entryController = EntryController();
@@ -26,9 +26,11 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
   @override
   void initState() {
     super.initState();
-    fechaEditingController.text = "${_fechaSeleccionada.year}-${_fechaSeleccionada.month.toString().padLeft(2, '0')}-${_fechaSeleccionada.day.toString().padLeft(2, '0')}";
+    fechaEditingController.text =
+        "${_fechaSeleccionada.year}-${_fechaSeleccionada.month.toString().padLeft(2, '0')}-${_fechaSeleccionada.day.toString().padLeft(2, '0')}";
   }
 
+  // Función para manejar el evento de guardar
   void _intentarGuardar() async {
     setState(() => _cargando = true);
 
@@ -47,28 +49,30 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('¡Guardado con éxito!'), backgroundColor: Colors.green),
+        const SnackBar(
+          content: Text('¡Guardado con éxito!'),
+          backgroundColor: Colors.green,
+        ),
       );
 
       Navigator.pop(context, true);
     }
   }
 
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F4F8), // Fondo gris claro consistente
       appBar: AppBar(
         title: const Text('Nueva promocion'),
-        backgroundColor: const Color(0xFFF1F4F8),
+        backgroundColor: const Color.fromARGB(179, 194, 147, 212),
         elevation: 0,
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            // Envolvemos tus inputs en la tarjeta centrada de 450px que querías
+
             child: Container(
               constraints: const BoxConstraints(maxWidth: 450),
               padding: const EdgeInsets.all(24.0),
@@ -92,19 +96,21 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
                   ),
 
                   const SizedBox(height: 20),
+
+                  // Template de formulario
                   PromocionFormTemplate(
                     formKey: formKey,
                     tituloController: tituloEditingController,
                     descripcionController: descripcionEditingController,
                     fechaController: fechaEditingController,
                     estadoValue: _estadoSeleccionado,
-                    
                     onEstadoChanged: (bool nuevoValor) {
                       setState(() {
                         _estadoSeleccionado = nuevoValor;
                       });
                     },
-                    
+
+                    // Función para manejar el evento de seleccionar la fecha
                     onFechaTap: () async {
                       final DateTime? picked = await showDatePicker(
                         context: context,
@@ -115,7 +121,8 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
                       if (picked != null) {
                         setState(() {
                           _fechaSeleccionada = picked;
-                          fechaEditingController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                          fechaEditingController.text =
+                              "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                         });
                       }
                     },
@@ -123,8 +130,11 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
 
                   const SizedBox(height: 24),
 
+                  // Botón de guardar
                   _cargando
-                      ? const CircularProgressIndicator(color: Color(0xFF4B39EF))
+                      ? const CircularProgressIndicator(
+                          color: Color(0xFF4B39EF),
+                        )
                       : SizedBox(
                           width: double.infinity,
                           height: 56,
@@ -137,7 +147,13 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
                                 borderRadius: BorderRadius.circular(40),
                               ),
                             ),
-                            child: const Text('Guardar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              'Guardar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                 ],
@@ -149,7 +165,3 @@ class _AddPromocionPageState extends State<AddPromocionesPage> {
     );
   }
 }
-
-
-
-
