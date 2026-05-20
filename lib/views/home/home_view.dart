@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/views/widgets/custom_form.dart';
-import 'package:flutter_app/views/widgets/custom_input.dart';
-import 'package:flutter_app/views/widgets/custom_switch.dart';
-import '../controllers/auth_controller.dart';
-import '../controllers/display_controller.dart';
-import '../controllers/update_controller.dart';
-import '../models/item_model.dart';
+import '../../controllers/auth_controller.dart';
+import '../../controllers/display_controller.dart';
+import '../../controllers/update_controller.dart';
+import '../../models/item_model.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);

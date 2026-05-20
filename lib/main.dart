@@ -5,8 +5,8 @@ import 'firebase_options.dart';
 import 'services/auth.dart';
 
 import 'views/authenticate/login_view.dart';
-import 'views/home_page.dart';
-import 'views/add_promociones_page.dart';
+import 'views/home/home_view.dart';
+import 'views/entry/add_promociones_view.dart';
 
 
 void main() async {

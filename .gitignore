@@ -34,6 +34,7 @@ migrate_working_dir/
 /coverage/
 /lib/firebase_options.dart
 lib/firebase_options.dart
+/lib/views/test.dart
 
 
 # Symbolication related

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../controllers/entry_controller.dart';
-import '../views/widgets/custom_input.dart';
-import '../views/widgets/custom_switch.dart';
-import '../views/widgets/custom_form.dart';
+import '../../../controllers/entry_controller.dart';
+import '../widgets/custom_form.dart';
 
 class AddPromocionesPage extends StatefulWidget{
   const AddPromocionesPage({super.key});
